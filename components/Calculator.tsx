@@ -40,7 +40,7 @@ const scientificCalculations = {
   e: () => Math.E,
   exp: Math.exp,
   abs: Math.abs,
-  factorial: (n) => {
+ factorial: (n: number): number => {
     if (n < 0) return NaN;
     if (n === 0 || n === 1) return 1;
     return n * scientificCalculations.factorial(n - 1);
