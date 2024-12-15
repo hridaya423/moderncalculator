@@ -40,20 +40,29 @@ const scientificCalculations = {
   e: () => Math.E,
   exp: Math.exp,
   abs: Math.abs,
- factorial: (n: number): number => {
+  factorial: (n: number): number => {
     if (n < 0) return NaN;
     if (n === 0 || n === 1) return 1;
     return n * scientificCalculations.factorial(n - 1);
   }
 };
 
+type ConversionState = {
+  [key: string]: number;
+};
+
+type ScientificCalcFunction = (arg: number) => number;
+
+// Define all possible modes
+type CalculatorMode = 'basic' | 'scientific' | 'currency' | 'mass' | 'temperature' | 'time' | 'data';
+
 const AdvancedCalculator: React.FC = () => {
-  const [currentMode, setCurrentMode] = useState<'basic' | 'scientific' | 'currency' | 'mass' | 'temperature' | 'time' | 'data'>('basic');
+  const [currentMode, setCurrentMode] = useState<CalculatorMode>('basic');
   const [display, setDisplay] = useState<string>('0');
   const [memory, setMemory] = useState<number>(0);
   const displayRef = useRef<HTMLDivElement>(null);
   
-  // Comprehensive conversion states
+  // Comprehensive conversion states with explicit typing
   const [currencyRates, setCurrencyRates] = useState<{[key: string]: number}>({
     USD: 1,
     EUR: 0.92,
@@ -65,8 +74,8 @@ const AdvancedCalculator: React.FC = () => {
   const [fromCurrency, setFromCurrency] = useState<string>('USD');
   const [toCurrency, setToCurrency] = useState<string>('EUR');
 
-  // Enhanced conversion states
-  const [massConversions, setMassConversions] = useState({
+  // Enhanced conversion states with explicit typing
+  const [massConversions, setMassConversions] = useState<ConversionState>({
     kg: 1,
     g: 0.001,
     lb: 0.453592,
@@ -75,19 +84,22 @@ const AdvancedCalculator: React.FC = () => {
     metric_ton: 1000,
     us_ton: 907.185
   });
-  const [tempConversions, setTempConversions] = useState({
-    celsius: (c) => c,
-    fahrenheit: (f) => (f - 32) * 5/9,
-    kelvin: (k) => k - 273.15
+
+  const [tempConversions, setTempConversions] = useState<{[key: string]: (temp: number) => number}>({
+    celsius: (c: number) => c,
+    fahrenheit: (f: number) => (f - 32) * 5/9,
+    kelvin: (k: number) => k - 273.15
   });
-  const [dataConversions, setDataConversions] = useState({
+
+  const [dataConversions, setDataConversions] = useState<ConversionState>({
     bytes: 1,
     kb: 1024,
     mb: 1024 * 1024,
     gb: 1024 * 1024 * 1024,
     tb: 1024 * 1024 * 1024 * 1024
   });
-  const [timeConversions, setTimeConversions] = useState({
+
+  const [timeConversions, setTimeConversions] = useState<ConversionState>({
     seconds: 1,
     minutes: 60,
     hours: 3600,
@@ -165,7 +177,8 @@ const AdvancedCalculator: React.FC = () => {
       switch(op) {
         case '=':
           const sanitizedExpression = display.replace(/×/g, '*').replace(/÷/g, '/');
-          setDisplay(String(eval(sanitizedExpression)));
+          // Type assertion for eval (use with caution)
+          setDisplay(String(eval(sanitizedExpression) as number));
           break;
         case 'C':
           setDisplay('0');
