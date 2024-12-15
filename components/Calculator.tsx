@@ -35,7 +35,6 @@ const scientificCalculations = {
   log: Math.log10,
   ln: Math.log,
   sqrt: Math.sqrt,
-  pow: Math.pow,
   pi: () => Math.PI,
   e: () => Math.E,
   exp: Math.exp,
